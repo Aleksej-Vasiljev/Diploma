@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }} | Robot Store</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <h1><a href="{% url 'index' %}" style="text-decoration: none; color: inherit;">🤖 Robot Store</a></h1>
+
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span>Привет, {{ user.username }}!</span>
+                <a href="{% url 'cart' %}">Корзина 🛒</a>
+                <a href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+                <a href="{% url 'login' %}">Войти</a>
+                <a href="{% url 'register' %}">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<div class="product-page">
+    <div class="product-detail-card">
+
+        <div class="product-image">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="{% static 'shop/no-image.png' %}" alt="Нет изображения">
+            {% endif %}
+        </div>
+
+        <div class="product-info">
+            <h2>{{ product.name }}</h2>
+            <p class="product-description">{{ product.description }}</p>
+            <ul class="product-parameters">
+                {% if product.country %}<li><strong>Страна производства:</strong> {{ product.country }}</li>{% endif %}
+                {% if product.lifespan %}<li><strong>Срок эксплуатации:</strong> {{ product.lifespan }}</li>{% endif %}
+                {% if product.warranty %}<li><strong>Срок гарантии:</strong> {{ product.warranty }}</li>{% endif %}
+            </ul>
+
+            <div class="product-price">{{ product.price }} €</div>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button class="buy-btn" type="submit">Добавить в корзину</button>
+                </form>
+            {% else %}
+                <p class="auth-warning"><a href="{% url 'login' %}">Войдите</a>, чтобы купить</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+<a href="{% url 'help_page' %}" class="help-btn">Нужна помощь?</a>
+</body>
+</html>

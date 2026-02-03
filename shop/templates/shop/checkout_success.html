@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ принят</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>{{ message }}</h2>
+            <a class="auth-btn" href="{% url 'index' %}">← Вернуться в магазин</a>
+        </div>
+    </div>
+</body>
+</html>

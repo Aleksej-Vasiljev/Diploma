@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <h1>🛒 Корзина</h1>
+    <a href="{% url 'index' %}">← В магазин</a>
+</header>
+
+<main class="cart-container">
+
+{% if items %}
+<table class="cart-table">
+    <tr>
+        <th>Товар</th>
+        <th>Изображение</th>
+        <th>Цена</th>
+        <th>Кол-во</th>
+        <th>Сумма</th>
+        <th>Действия</th>
+    </tr>
+
+    {% for item in items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>
+            {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-img">
+            {% else %}
+                <img src="{% static 'shop/no-image.png' %}" alt="Нет изображения" class="cart-img">
+            {% endif %}
+        </td>
+        <td>{{ item.product.price|floatformat:2 }} €</td>
+        <td>
+            <a href="{% url 'decrease_item' item.id %}">−</a>
+            {{ item.quantity }}
+            <a href="{% url 'add_to_cart' item.product.id %}">+</a>
+        </td>
+        <td>{{ item.total_price|floatformat:2 }} €</td>
+        <td>
+            <a href="{% url 'remove_from_cart' item.id %}">❌</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Итого: {{ total|floatformat:2 }} €</h2>
+<form method="post" action="{% url 'checkout' %}">
+    {% csrf_token %}
+    <button type="submit" class="checkout-btn">Оформить заказ</button>
+</form>
+
+{% else %}
+<p>Корзина пуста 😕</p>
+{% endif %}
+
+</main>
+<a href="{% url 'help_page' %}" class="help-btn">Нужна помощь?</a>
+</body>
+</html>

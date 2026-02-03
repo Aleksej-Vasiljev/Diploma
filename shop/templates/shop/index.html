@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Robot Store</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <h1>🤖 Robot Store</h1>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span>Привет, {{ user.username }}!</span>
+                <a href="{% url 'cart' %}">Корзина 🛒</a>
+                <a href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+                <a href="{% url 'login' %}">Войти</a>
+                <a href="{% url 'register' %}">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+    <p class="site-tagline">Интернет-магазин роботов нового поколения</p>
+</header>
+
+<div class="category-filter">
+    <a href="{% url 'index' %}" class="{% if not selected_category %}active{% endif %}">Все</a>
+    <a href="?category=industrial" class="{% if selected_category == 'industrial' %}active{% endif %}">Промышленные</a>
+    <a href="?category=home" class="{% if selected_category == 'home' %}active{% endif %}">Домашние</a>
+    <a href="?category=security" class="{% if selected_category == 'security' %}active{% endif %}">Охранные</a>
+</div>
+
+<main class="products">
+    {% for product in products %}
+        <div class="card">
+            <a href="{% url 'product_detail' product.id %}">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <img src="{% static 'shop/no-image.png' %}" alt="Нет изображения">
+                {% endif %}
+                <h2>{{ product.name }}</h2>
+                <span>{{ product.price }} €</span>
+            </a>
+
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="add-to-cart-btn">Добавить в корзину</button>
+                </form>
+            {% else %}
+                <p>
+                    <a href="{% url 'login' %}">Войдите</a>, чтобы купить
+                </p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Товары пока не добавлены.</p>
+    {% endfor %}
+</main>
+<a href="{% url 'help_page' %}" class="help-btn">Нужна помощь?</a>
+{% if recent_products %}
+<section class="recently-viewed">
+    <h2>Недавно смотрели</h2>
+    <div class="recent-cards-container">
+        {% for recent_product in recent_products %}
+            <div class="recent-card">
+                <a href="{% url 'product_detail' recent_product.id %}">
+                    {% if recent_product.image %}
+                        <img src="{{ recent_product.image.url }}" alt="{{ recent_product.name }}">
+                    {% else %}
+                        <img src="{% static 'shop/no-image.png' %}" alt="Нет изображения">
+                    {% endif %}
+                    <h3>{{ recent_product.name }}</h3>
+                    <span>{{ recent_product.price }} €</span>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+</body>
+</html>

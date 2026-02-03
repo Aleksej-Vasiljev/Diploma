@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Вход в аккаунт</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="id_username">Имя пользователя</label>
+            {{ form.username }}
+
+            <label for="id_password">Пароль</label>
+            {{ form.password }}
+
+            <button type="submit" class="auth-btn">Войти</button>
+        </form>
+        <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+    </div>
+</div>
+
+</body>
+</html>

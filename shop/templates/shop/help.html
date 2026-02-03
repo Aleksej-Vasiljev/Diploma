@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Нужна помощь?</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+<div class="help-container">
+    <h2>Оставьте заявку</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Ваш логин">
+        <input type="tel" name="phone" placeholder="+375XXXXXXXXX" pattern="^\+?\d{1,12}$" maxlength="13" required>
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+</body>
+</html>
