@@ -497,3 +497,79 @@ header {
     margin-top: 10px;
     color: #006666;
 }
+
+.filter-title {
+    text-align: center;
+    color: #00fff0;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.price-filter {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.price-filter input[type="number"] {
+    width: 100px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #00fff0;
+    background: #111827;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.price-filter button {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 2px solid #00fff0;
+    background: transparent;
+    color: #00fff0;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.price-filter button:hover {
+    background: #00fff0;
+    color: #000;
+    box-shadow: 0 0 12px rgba(0,255,240,0.6);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 20px 0 50px;
+    flex-wrap: wrap;
+}
+
+.pagination a, .pagination span {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 2px solid #00fff0;
+    text-decoration: none;
+    font-weight: bold;
+    color: #00fff0;
+    background: transparent;
+    transition: all 0.25s ease;
+}
+
+.pagination a:hover {
+    background: #00fff0;
+    color: #000;
+    box-shadow: 0 0 12px rgba(0,255,240,0.6);
+}
+
+.pagination span.active {
+    background: #00fff0;
+    color: #000;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(0,255,240,0.6);
+}

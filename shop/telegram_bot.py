@@ -1,12 +1,12 @@
 import os
 from dotenv import load_dotenv
-import telebot
+from telegram import Bot
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-bot = telebot.TeleBot(TOKEN)
+bot = Bot(token=TOKEN)
 
-def send_order_notification(message):
-    bot.send_message(chat_id=CHAT_ID, text=message)
+async def send_order_notification(message):
+    await bot.send_message(chat_id=CHAT_ID, text=message)

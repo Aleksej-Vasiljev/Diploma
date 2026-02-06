@@ -32,6 +32,24 @@
     <a href="?category=security" class="{% if selected_category == 'security' %}active{% endif %}">Охранные</a>
 </div>
 
+<p class="filter-title">Фильтр по цене</p>
+<div class="price-filter">
+    <form method="get">
+
+        {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+
+        <input type="number" name="min_price" placeholder="Цена от"
+               value="{{ min_price|default:'' }}">
+
+        <input type="number" name="max_price" placeholder="Цена до"
+               value="{{ max_price|default:'' }}">
+
+        <button type="submit">Поиск</button>
+    </form>
+</div>
+
 <main class="products">
     {% for product in products %}
         <div class="card">
@@ -60,7 +78,34 @@
         <p>Товары пока не добавлены.</p>
     {% endfor %}
 </main>
-<a href="{% url 'help_page' %}" class="help-btn">Нужна помощь?</a>
+{% if products.has_other_pages %}
+<div class="pagination">
+    {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}
+        {% if selected_category %}&category={{ selected_category }}{% endif %}
+        {% if min_price %}&min_price={{ min_price }}{% endif %}
+        {% if max_price %}&max_price={{ max_price }}{% endif %}">← Назад</a>
+    {% endif %}
+
+    {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+            <span class="active">{{ num }}</span>
+        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+            <a href="?page={{ num }}
+            {% if selected_category %}&category={{ selected_category }}{% endif %}
+            {% if min_price %}&min_price={{ min_price }}{% endif %}
+            {% if max_price %}&max_price={{ max_price }}{% endif %}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}
+        {% if selected_category %}&category={{ selected_category }}{% endif %}
+        {% if min_price %}&min_price={{ min_price }}{% endif %}
+        {% if max_price %}&max_price={{ max_price }}{% endif %}">Вперёд →</a>
+    {% endif %}
+</div>
+{% endif %}<a href="{% url 'help_page' %}" class="help-btn">Нужна помощь?</a>
 {% if recent_products %}
 <section class="recently-viewed">
     <h2>Недавно смотрели</h2>

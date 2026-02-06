@@ -5,14 +5,28 @@ from django.contrib.auth.decorators import login_required
 from .models import Product, Cart, CartItem, Profile
 from .forms import CustomUserCreationForm
 from .telegram_bot import send_order_notification
+from asgiref.sync import async_to_sync
+from django.core.paginator import Paginator
 
 
 def index(request):
     category = request.GET.get('category')
+    min_price = request.GET.get("min_price")
+    max_price = request.GET.get("max_price")
+    products = Product.objects.all().order_by("-created_at")
     if category:
-        products = Product.objects.filter(category=category)
-    else:
-        products = Product.objects.all()
+        products = products.filter(category=category)
+
+    if min_price:
+        products = products.filter(price__gte=min_price)
+
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    paginator = Paginator(products, 6)
+    page_number = request.GET.get("page")
+    products = paginator.get_page(page_number)
+
     recent_products = []
     recent_ids = request.session.get('recent_products', [])
     if not isinstance(recent_ids, list):
@@ -29,7 +43,10 @@ def index(request):
         'products': products,
         'selected_category': category,
         'recent_products': recent_products,
+        'min_price': min_price,
+        'max_price': max_price,
     })
+
 
 
 def product_detail(request, pk):
@@ -106,12 +123,12 @@ def cart_view(request):
 def checkout(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        order_items = "\n".join([f"{item.product.name} x {item.quantity}" for item in cart.cartitem_set.all()])
+        order_items = "\n".join([f"{item.product.name} x {item.quantity}" for item in cart.items.all()])
         message = f"Новый заказ от {request.user.username}:\n{order_items}"
 
-        send_order_notification(message)  # синхронная отправка
+        async_to_sync(send_order_notification)(message)
 
-        cart.cartitem_set.all().delete()
+        cart.items.all().delete()
 
         return render(request, 'shop/checkout_success.html', {
             'message': "Ваш заказ в обработке. С вами свяжется наш менеджер"
@@ -139,7 +156,7 @@ def help_page(request):
         username = request.POST.get("username", "Аноним")
         phone = request.POST.get("phone", "Не указан")
         message = f"💬 Заявка на помощь!\nПользователь: {username}\nТелефон: {phone}"
-        send_order_notification(message)
+        async_to_sync(send_order_notification)(message)
         return render(request, "shop/help_sent.html", {"username": username})
     return render(request, "shop/help.html")
 
